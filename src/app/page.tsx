@@ -10,28 +10,27 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import {
   Home,
   Zap,
-  Circle,
-  Search,
   CheckSquare,
-  Type,
   FileText,
   ImageIcon,
   Video,
   Sparkles,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Grid3X3,
   Settings,
   User,
   Bell,
   HelpCircle,
-  Battery as Gallery,
   Layers,
   Play,
   Wand2,
   Shuffle,
   Train,
   Eye,
+  Menu,
+  X,
 } from "lucide-react"
 
 const slides = [
@@ -53,7 +52,6 @@ const slides = [
     tag: "THE MODEL",
     cta: "Learn More",
   },
-  // --- 5 additional dummy slides ---
   {
     id: 3,
     title: "Style Fusion",
@@ -101,10 +99,10 @@ const slides = [
   },
 ]
 
-
 export default function KreaAILandingPage() {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: "start" })
   const [selectedIndex, setSelectedIndex] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
 
   const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi])
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi])
@@ -121,36 +119,27 @@ export default function KreaAILandingPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 bg-background border-b border-border">
-        <div className="flex items-center gap-4">
+      {/* Header with Hamburger */}
+      <header className="flex flex-col md:flex-row items-center justify-between px-4 md:px-6 py-4 bg-background border-b border-border">
+        {/* Left */}
+        <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-foreground rounded-lg flex items-center justify-center">
             <Layers className="w-5 h-5 text-background" />
           </div>
           <span className="text-sm text-muted-foreground">kreaai.com/professional</span>
         </div>
 
-        <div className="flex items-center gap-2 bg-muted rounded-lg p-1">
-          {[
-            <Home key="home" />,
-            // <Zap key="zap" />,
-            <ImageIcon key="image" />,
-            <Video key="video" />,
-            // <Circle key="circle" />,
-            // <Search key="search" />,
-            <Wand2 key="edit" />,
-            <Sparkles key="enhancer" />,
-            <CheckSquare key="check" />,
-            // <Type key="type" />,
-            <FileText key="file" />,
-          ].map((Icon, i) => (
-            <Button key={i} variant="ghost" size="sm">
-              {Icon}
+        {/* Desktop Center Icons */}
+        <div className="hidden md:flex flex-wrap md:flex-nowrap items-center gap-2 bg-muted rounded-lg p-1">
+          {[Home, ImageIcon, Video, Wand2, Sparkles, CheckSquare, FileText].map((Icon, i) => (
+            <Button key={i} variant="ghost" size="sm" className="flex-1 md:flex-initial">
+              <Icon className="w-4 h-4" />
             </Button>
           ))}
         </div>
 
-        <div className="flex items-center gap-3">
+        {/* Desktop Right */}
+        <div className="hidden md:flex items-center gap-2 md:gap-3">
           <Button variant="ghost" size="sm">
             <ImageIcon className="w-4 h-4 mr-2" />
             Gallery
@@ -170,75 +159,122 @@ export default function KreaAILandingPage() {
             <User className="w-4 h-4 text-white" />
           </div>
         </div>
+
+        {/* Mobile Hamburger */}
+        <button
+          className="md:hidden text-foreground ml-auto"
+          onClick={() => setIsOpen(!isOpen)}
+        >
+          {isOpen ? <X size={24} /> : <Menu size={24} />}
+        </button>
+
+        {/* Mobile Dropdown */}
+        {isOpen && (
+          <div className="md:hidden w-full mt-4 bg-muted rounded-lg p-4 space-y-4">
+            {/* Icons Row */}
+            <div className="flex flex-wrap gap-2 justify-center">
+              {[Home, ImageIcon, Video, Wand2, Sparkles, CheckSquare, FileText].map((Icon, i) => (
+                <Button key={i} variant="ghost" size="sm">
+                  <Icon className="w-4 h-4" />
+                </Button>
+              ))}
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-col gap-3">
+              <Button variant="ghost" size="sm" className="justify-start">
+                <ImageIcon className="w-4 h-4 mr-2" />
+                Gallery
+              </Button>
+              <Button variant="ghost" size="sm" className="justify-start">
+                <HelpCircle className="w-4 h-4 mr-2" />
+                Support
+              </Button>
+              <div className="flex items-center gap-3">
+                <Bell className="w-4 h-4" />
+                <ThemeToggle />
+                <Settings className="w-4 h-4" />
+                <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                  <User className="w-4 h-4 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </header>
 
-      <main className="px-6 py-8 max-w-7xl mx-auto">
+      {/* Main */}
+      <main className="px-4 md:px-6 py-6 md:py-8 max-w-7xl mx-auto">
         {/* Hero Section */}
         <div className="relative">
-      <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex gap-4">
-          {slides.map((s) => (
-            <Card
-              key={s.id}
-              className="relative flex-[0_0_85%] lg:flex-[0_0_60%] overflow-hidden h-80 rounded-xl"
-            >
-              {/* Background images */}
-              <div className="absolute inset-0 grid grid-cols-3">
-                {s.bg.map((img, i) => (
-                  <div key={i} className="bg-cover bg-center" style={{ backgroundImage: `url(${img})` }} />
-                ))}
-              </div>
-              <div className="absolute inset-0 bg-black/40" />
-              <div className="relative z-10 p-8 h-full flex flex-col justify-between">
-                <div>
-                  <div className="text-sm text-primary mb-2">{s.tag}</div>
-                  <h1 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">{s.title}</h1>
-                  <div className="mb-4">
-                    <h2 className="text-xl font-semibold text-white mb-2 drop-shadow-md">{s.subtitle}</h2>
-                    <p className="text-sm text-gray-200 max-w-sm">{s.desc}</p>
+          <div className="overflow-hidden" ref={emblaRef}>
+            <div className="flex gap-4">
+              {slides.map((s) => (
+                <Card
+                  key={s.id}
+                  className="relative flex-[0_0_95%] sm:flex-[0_0_85%] lg:flex-[0_0_60%] overflow-hidden h-72 sm:h-80 rounded-xl"
+                >
+                  <div className="absolute inset-0 grid grid-cols-3">
+                    {s.bg.map((img, i) => (
+                      <div key={i} className="bg-cover bg-center" style={{ backgroundImage: `url(${img})` }} />
+                    ))}
                   </div>
-                </div>
-                <div className="flex justify-between items-center">
-                  <Button className="bg-white/90 backdrop-blur-sm text-black border hover:bg-white">{s.cta}</Button>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      </div>
-
-      {/* Circle indicators */}
-      <div className="flex justify-center gap-2 mt-4">
-        {slides.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => emblaApi?.scrollTo(i)}
-            className={`w-2 h-2 rounded-full ${i === selectedIndex ? "bg-primary" : "bg-gray-600"}`}
-          />
-        ))}
-      </div>
-
-      {/* Prev/Next arrows bottom right */}
-      <div className="absolute bottom-4 right-4 flex gap-2">
-        <button onClick={scrollPrev} className="p-2 bg-primary rounded-full shadow">
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-        <button onClick={scrollNext} className="p-2 bg-primary rounded-full shadow">
-          <ChevronRight className="w-5 h-5" />
-        </button>
-      </div>
-    </div>
-
-        {/* Generate Section */}
-        <div className="mb-12">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-semibold text-foreground">Generate</h2>
-            <Button variant="ghost" className="text-accent bg-ring hover:text-primary">
-              Show all
-            </Button>
+                  <div className="absolute inset-0 bg-black/40" />
+                  <div className="relative z-10 p-4 sm:p-8 h-full flex flex-col justify-between">
+                    <div>
+                      <div className="text-xs sm:text-sm text-primary mb-2">{s.tag}</div>
+                      <h1 className="text-2xl sm:text-4xl font-bold text-white mb-2 sm:mb-4 drop-shadow-lg">{s.title}</h1>
+                      <div className="mb-2 sm:mb-4">
+                        <h2 className="text-lg sm:text-xl font-semibold text-white mb-1 sm:mb-2 drop-shadow-md">{s.subtitle}</h2>
+                        <p className="text-xs sm:text-sm text-gray-200 max-w-sm">{s.desc}</p>
+                      </div>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <Button className="bg-white/90 backdrop-blur-sm text-black border hover:bg-white text-xs sm:text-sm">
+                        {s.cta}
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-3">
+          {/* Indicators */}
+          <div className="flex justify-center gap-2 mt-4">
+            {slides.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => emblaApi?.scrollTo(i)}
+                className={`w-2 h-2 rounded-full ${i === selectedIndex ? "bg-primary" : "bg-gray-600"}`}
+              />
+            ))}
+          </div>
+
+          {/* Arrows */}
+          <div className="absolute bottom-4 right-4 flex gap-2">
+            <button onClick={scrollPrev} className="p-2 bg-input rounded-full shadow">
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button onClick={scrollNext} className="p-2 bg-input rounded-full shadow">
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* Generate Section */}
+        <div className="mb-12 mt-10">
+          <div className="flex items-center justify-between mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-2xl font-semibold text-foreground">Generate</h2>
+            <div className="flex items-center gap-1 cursor-pointer">
+              <ChevronDown className="w-4 h-4 text-popover"  />
+              <a href="#" className="text-sm font-medium text-popover">
+                Show all
+              </a>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {[
               { title: "Image", icon: <ImageIcon className="w-4 h-4 " />, badge: true, desc: "Generate high-quality images with multiple prompts and styles with Krea." },
               { title: "Video", icon: <Video className="w-4 h-4 " />, desc: "Create videos with Haiku. Play with prompts and styles." },
@@ -249,22 +285,20 @@ export default function KreaAILandingPage() {
               { title: "Enhancer", icon: <Sparkles className="w-4 h-4 " />, badge: true, desc: "Enhance and upscale images and videos with AI technology." },
               { title: "Train", icon: <Train className="w-4 h-4" />, desc: "Train AI to replicate your style, characters & objects." },
             ].map(({ title, icon, badge, desc }, i) => (
-              <Card key={i} className="p-3 hover:shadow-md transition-shadow bg-muted ">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8  rounded-lg flex ">
-                    {icon}
-                  </div>
+              <Card key={i} className="p-3 hover:shadow-md transition-shadow bg-muted">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-lg text-card-foreground border items-center bg-border justify-center flex">{icon}</div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
                         <h3 className="text-sm font-medium text-foreground">{title}</h3>
                         {badge && <Badge variant="secondary" className="text-xs">NEW</Badge>}
                       </div>
-                      <Button variant="ghost" size="sm" className="text-accent bg-ring p-1 h-auto text-xs">
+                      <Button variant="ghost" size="sm" className="text-accent bg-ring p-1 rounded-full h-auto text-xs">
                         Open
                       </Button>
                     </div>
-                    <p className="text-[9px] text-accent mt-1 ">{desc}</p>
+                    <p className="text-[10px] sm:text-[9px] text-accent mt-1">{desc}</p>
                   </div>
                 </div>
               </Card>
@@ -273,25 +307,43 @@ export default function KreaAILandingPage() {
         </div>
 
         {/* Gallery Section */}
-        <div className="bg-card rounded-xl p-6 border border-border">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-accent-foreground rounded-lg flex items-center justify-center">
-                <Grid3X3 className="w-5 h-5 text-background" />
-              </div>
-              <h2 className="text-xl font-semibold text-accent-foreground">Krea AI</h2>
-            </div>
+        <div className="mb-12">
+          {/* Header row above the gallery */}
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-sm font-medium text-muted-foreground">Gallery</h2>
             <div className="flex items-center gap-4">
-              <span className="text-accent-foreground text-sm">curated by</span>
-              <div className="flex items-center gap-2">
-                <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
-                  <Eye className="w-4 h-4 text-accent-foreground" />
+              <a href="#" className="flex items-center gap-1 text-xs text-muted-foreground ">
+                <FileText className="w-3 h-3" />
+                Legal
+              </a>
+              <a href="#" className="flex items-center gap-1 text-xs text-muted-foreground ">
+                <Zap className="w-3 h-3" />
+                Pricing
+              </a>
+            </div>
+          </div>
+
+          <div className="bg-card rounded-xl p-4 sm:p-6 border border-border">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-accent-foreground rounded-lg flex items-center justify-center">
+                  <Grid3X3 className="w-5 h-5 text-background" />
                 </div>
-                <span className="text-accent-foreground font-medium">Mobbin</span>
+                <h2 className="text-lg sm:text-xl font-semibold text-accent-foreground">Krea AI</h2>
+              </div>
+              <div className="flex items-center gap-2 sm:gap-4">
+                <span className="text-accent-foreground text-xs sm:text-sm">curated by</span>
+                <div className="flex items-center gap-2">
+                  <div className="w-6 h-6 bg-primary rounded flex items-center justify-center">
+                    <Eye className="w-4 h-4 text-accent-foreground" />
+                  </div>
+                  <span className="text-accent-foreground font-medium text-sm sm:text-base">Mobbin</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
       </main>
     </div>
   )
